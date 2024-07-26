@@ -4,16 +4,28 @@
     },
     "restoreTerminals.terminals": [
         {
-          "splitTerminals": [
-            {
-              "name": "backend",
-              "commands": ["cd backend","npm i", "docker compose up -d", "npx prisma migrate dev","npx prisma generate", "nodemon"]
-            },
-            {
-              "name": "frontend",
-              "commands": ["cd frontend","npx prettier --write .","npm i","npm run dev"]
-            }
-          ]
+            "splitTerminals": [
+                {
+                    "name": "backend",
+                    "commands": [
+                        "cd backend",
+                        "npm i",
+                        "docker compose up -d",
+                        "npx prisma migrate dev",
+                        "npx prisma generate",
+                        "nodemon"
+                    ]
+                },
+                {
+                    "name": "frontend",
+                    "commands": [
+                        "cd frontend",
+                        "npx prettier --write .",
+                        "npm i",
+                        "npm run dev"
+                    ]
+                }
+            ]
         }
     ]
 }
