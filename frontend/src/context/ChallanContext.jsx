@@ -116,11 +116,11 @@ const ChallanProvider = ({ children }) => {
   const payChallan = async (formData) => {
     // const checkWallet = checkIfWalletIsConnect();
     // if(checkWallet != 200) return alert('Please connect/install your wallet first');
-    try {
+    // try {
       const challanContract = await getChallanContract();
 
-      const { challanId, vehicleId, issueDate, paid, fine, location, reason } = formData;
-
+      const { vehicleId, issueDate, paid, fine, location, reason } = formData;
+      // const { challanId } = useParams();
       console.log(formData);
       console.log(fine);
       let amt = fine + '';
@@ -139,16 +139,17 @@ const ChallanProvider = ({ children }) => {
         ],
       });
       console.log('parsedAmount : ', parsedAmount);
-
+      console.log('currentAccount : ', challanId);
       const challanTransaction = await challanContract.payChallan(challanId);
+      console.log('hiiiii');
       setIsLoading(true);
       console.log(`Loading - ${challanTransaction.hash}`);
       await challanTransaction.wait();
       console.log(`Success - ${challanTransaction.hash}`);
       setIsLoading(false);
-    } catch (err) {
-      console.log(err);
-    }
+    // } catch (err) {
+    //   console.log(err);
+    // }
   };
 
   return (
