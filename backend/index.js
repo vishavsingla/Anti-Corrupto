@@ -26,7 +26,7 @@ dotenv.config();
 // };
 
 const corsOptions = {
-  origin: ["https://anti-corrupto.vercel.app", "http://localhost:5173"],
+  origin: ["https://anticorrupto.vercel.app", "http://localhost:5173"],
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
