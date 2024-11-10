@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { challancontractABI, challancontractAddress } from '../Utils/ethers/constants';
+import { addChallanTransactionHashToDB } from '../Utils/API/challanApi';
 import { ethers } from 'ethers';
 import { useParams } from 'react-router-dom';
 
@@ -134,7 +135,8 @@ const ChallanProvider = ({ children }) => {
     try {
       const challanContract = await getChallanContract();
 
-      const { challanId, vehicleId, issueDate, paid, fine, challanIdBlockchain } = formData;
+      const { id, vehicleId, issueDate, paid, fine, challanIdBlockchain } = formData;
+      console.log(formData);
 
       let amt = fine + '';
       const parsedAmount = ethers.parseEther(amt);
@@ -153,12 +155,16 @@ const ChallanProvider = ({ children }) => {
 
 
       const challanTransaction = await challanContract.payChallan(challanIdBlockchain);
+      // const challanTransaction = "asdasdasdasd";
       setIsLoading(true);
       console.log(`Loading - ${challanTransaction.hash}`);
       await challanTransaction.wait();
       console.log(`Success - ${challanTransaction.hash}`);
       setIsLoading(false);
-      if (challanTransaction.hash) return 200;
+
+      const transactionHashResponse = await addChallanTransactionHashToDB(id, challanTransaction.hash);
+
+      if (transactionHashResponse.status==200) return 200;
       else return 400;
     } catch (err) {
       console.log(err);

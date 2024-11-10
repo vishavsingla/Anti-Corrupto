@@ -20,7 +20,7 @@ function PayingChallan() {
       // const challanstatus = 200;
       if (challanstatus == 200) {
         await updateChallanStatus(challanData.id);
-        navigate('/');
+        navigate('/dashboard/vehicle/' + vehicleId + '/challan');
       } else {
         console.log('Error paying challan');
         error('Error paying challan');

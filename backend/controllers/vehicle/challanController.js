@@ -31,6 +31,33 @@ const createChallan = async (req, res) => {
   }
 };
 
+const getChallanReceipt = async (req, res) => {
+  try{
+    const id = req.params.id;
+    const challan = await prisma.challan.findUnique({
+      where: { id },
+    });
+    if (!challan) {
+      res.status(404).json({ error: "Challan not found" });
+    } else {
+      res.status(200).json(challan);
+    }
+
+    const transactionHash = req.params.hash;
+    const updatedChallan = await prisma.challan.update({
+      where: { id },
+      data: { transactionHash },
+    });
+
+    res.status(200);
+
+  }catch(err){
+    res
+      .status(500)
+      .json({ error: "Error fetching challans", details: err.message });
+  }
+}
+
 // Get all challans
 const getAllChallans = async (req, res) => {
   try {
@@ -100,4 +127,5 @@ module.exports = {
   getChallanById,
   updateChallan,
   deleteChallan,
+  getChallanReceipt
 };

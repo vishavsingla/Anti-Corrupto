@@ -90,7 +90,7 @@ const VehicleChallan = () => {
                       {challan.status ? 'Paid' : 'Unpaid'}
                     </p>
                     <Link
-                      to={`/dashboard/vehicle/${vehicleId}/challan/${challan.id}`}
+                      to={`https://sepolia.etherscan.io/tx/${challan.transactionHash}`}
                       className="inline-block max-w-xs mt-4 px-3 py-2 bg-blue-600 text-white rounded shadow hover:bg-blue-700"
                     >
                       View Receipt

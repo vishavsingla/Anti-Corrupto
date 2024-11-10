@@ -1,28 +1,27 @@
-
 services:
-  # backend:
-  #   container_name: backend
-  #   image: backend
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 3000:3000
-  #     - 5555:5555
-  #   environment:
-  #     - DATABASE_URL="postgresql://postgres:123@db:5432/capstone?schema=public"
-  db:
-    container_name: db
-    image: postgres:15
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: capstone
+  backend:
+    container_name: backend
+    image: vishav9933/anti-corrupto:latest 
     ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      - 3000:3000
+      - 5555:5555
+    environment:
+      - DATABASE_URL="postgresql://AntiCorrupto:TharaBhai%40Jod@antiserver.postgres.database.azure.com:5432/postgres?sslmode=require"
+      - ACCESS_TOKEN_PRIVATE_KEY=9aba66anb4929d9e91536320b157206ef3b54785f89187129a5a55896daa37dd898f77970d9264a72f054a1f912c16dcbef356e20d2cd713662bb73865e65d197d
+      - REFRESH_TOKEN_PRIVATE_KEY=5ffbfdc7517d8dmj3308cba5cf190598677b2c6680825e5ddda0d6408492d2gb98374b286c42f0785bf3a19be180d0c370b5a85161815d973a350254cedc3075f
+      
+  # db:
+  #   container_name: db
+  #   image: postgres:15
+  #   restart: always
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: 123
+  #     POSTGRES_DB: capstone
+  #   ports:
+  #     - 5432:5432
+  #   volumes:
+  #     - pgdata:/var/lib/postgresql/data
 
 volumes:
   pgdata: {}

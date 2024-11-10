@@ -5,7 +5,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+
 }
 
 enum Role {
@@ -98,6 +98,7 @@ model Challan {
   location  String
   officerId String?
   challanIdBlockchain String?
+  transactionHash String?
 }
 
 model Repair {
@@ -124,6 +125,7 @@ model Land {
   boughtPrice              String?
   transferHistory          TransferLand[]
   inquiries                LandInquiry[]  @relation("LandInquiries") // Relation to LandInquiry for tracking inquiries
+  landName                 String?
 }
 
 enum LandType {

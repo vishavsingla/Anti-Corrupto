@@ -46,3 +46,13 @@ export const updateChallanStatus = async (challanId) => {
     throw error;
   }
 };
+
+export const addChallanTransactionHashToDB = async (challanId, transactionHash) => {
+  try {
+    console.log("In API: ",challanId, transactionHash)
+    const response = await axios.post(`${API_URL}/update/challan/transactionhash/${challanId}/${transactionHash}`, header);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};

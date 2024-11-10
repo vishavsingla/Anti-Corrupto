@@ -46,7 +46,7 @@ const AddVehicleChallan = () => {
       if (challan.status === 200) {
         navigate(`/dashboard/vehicle/${vehicleId}/challan`);
       } else {
-        console.log('in add vehicle chalanaasndjansdnaksnd : ', challan.data.error);
+        console.log('in add vehicle : ', challan.data.error);
       }
     } catch (error) {
       console.error('Error adding challan:', error);
@@ -61,6 +61,7 @@ const AddVehicleChallan = () => {
       location: 'Delhi',
       reason: reason,
     };
+
     const tempid = await addChallanToBlockchain(challanFormData);
     return tempid.toString();
   };
