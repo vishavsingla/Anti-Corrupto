@@ -144,7 +144,7 @@ model TransferLand {
   currentOwner   User       @relation("CurrentOwner", fields: [currentOwnerId], references: [id], onDelete: Cascade)
   landId         String
   land           Land       @relation(fields: [landId], references: [id], onDelete: Cascade)
-  landIdWeb3     String     @unique
+  landIdWeb3     String     
   transferDate   DateTime   @default(now())
   transferPrice  String     @default("0")
   landCases      LandCase[]

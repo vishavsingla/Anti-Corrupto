@@ -69,21 +69,22 @@ function UserLandInterest() {
   };
 
   const confirmInterest = async () => {
-
     const formData = {
       landId: selectedLand.land.web3Id,
       landIdWeb3: selectedLand.land.web3Id,
-      landIdBackend: selectedLand.landId,
+      landIdBackend: selectedLand.land.id,
       prevOwnerId: selectedLand.land.ownerId,
       currentOwnerId: clientId,
       transferAmount: selectedLand.land.boughtPrice,
     };
 
-    const transactionConfirmations = await transferLandfunc(formData);
+    // const transactionConfirmations = await transferLandfunc(formData);
+    const transactionConfirmations = 200;
 
     if (transactionConfirmations === 200) {
       setShowModal(false);
       const response = await createTransferLand(formData);
+      console.log(response);
       if (response.status == 200) {
         alert('Land Transfer Successful');
       } else console.log(response.error);
@@ -211,7 +212,7 @@ function UserLandInterest() {
               // }}
               className="px-4 pt-4 text-2xl font-bold"
             >
-              {land.landId}
+              Land Number : {land.land.landIdentificationNumber}
             </p>
             {land.landType === 0 ? (
               <p className="pl-4 ">Government</p>
@@ -224,20 +225,20 @@ function UserLandInterest() {
             ) : (
               <p className="pl-4 ">Residential</p>
             )}
-            <p className="pl-4 ">Dimension : {land.dimensionOfLand}</p>
+            <p className="pl-4 ">Dimension : {land.land.dimensionOfLand}</p>
             <div className="flex flex-row">
-              <p className="pl-4 ">{land.area},</p>
+              <p className="pl-4 ">{land.land.area},</p>
               <div className="flex flex-row items-center">
                 <MdLocationPin className="ml-1" />
-                <p>{land.location}</p>
+                <p>{land.land.location}</p>
               </div>
             </div>
           </div>
           {/* <Link to={`/dashboard/land/transfer/${land.id}`}> */}
           <p className="p-4 text-lg font-bold">
-            Owner: {land.currentOwner}
+            Owner: {`${land.land.ownerId.slice(0, 4)}...${land.land.ownerId.slice(-4)}`}
             <br></br>
-            Current Rate: ₹{land.transferAmount}/-
+            Current Rate: ₹{land.land.boughtPrice}/-
             <br></br>
             Status: {land.status}
           </p>
