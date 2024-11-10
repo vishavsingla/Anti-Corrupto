@@ -17,8 +17,8 @@ load_dotenv()
 db = SQLAlchemy()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] ="postgresql://postgres.pgxcbqefaxqptyzgjyvr:terabhaijod@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
+# app.config['SQLALCHEMY_DATABASE_URI'] ="postgresql://postgres.pgxcbqefaxqptyzgjyvr:terabhaijod@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -39,6 +39,7 @@ infura_project_id = os.getenv("INFURA_PROJECT_ID")
 private_key = os.getenv("PRIVATE_KEY")
 etherscan_api_key = os.getenv("ETHERSCAN_API_KEY")
 contract_address = os.getenv("CONTRACT_ADDRESS")
+
 
 web3 = Web3(Web3.HTTPProvider(f"https://sepolia.infura.io/v3/{infura_project_id}"))
 
@@ -156,7 +157,9 @@ def transact():
     print('hi2')
     nonce = web3.eth.get_transaction_count(
             account.address)
-    transaction = contract.functions.issueChallan(    tx_data['vehicleId'],
+    print(tx_data)
+    print(nonce)
+    transaction = contract.functions.issueChallan( tx_data['vehicleId'],
     tx_data['amount'],
     tx_data['reason'],
     tx_data['location']).build_transaction({
