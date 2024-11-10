@@ -86,20 +86,19 @@ const getLandById = async (req, res) => {
     const land = await prisma.land.findUnique({
       where: { id: landId },
     });
-if (!land) {
-  res.status(203).json({ error: "Land not found" });
-} else {
-  res.status(200).json(land);
-}
+    if (!land) {
+      res.status(203).json({ error: "Land not found" });
+    } else {
+      res.status(200).json(land);
+    }
   } catch (error) {
-  res
-    .status(203)
-    .json({ error: "Error fetching land", details: error.message });
-}
+    res
+      .status(203)
+      .json({ error: "Error fetching land", details: error.message });
+  }
 };
 
 const addLandIdToDB = async (req, res) => {
-
   const landId = req.params.id;
   const { LandBlockchainId } = req.body;
   try {

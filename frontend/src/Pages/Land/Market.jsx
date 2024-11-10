@@ -162,7 +162,9 @@ function Market() {
             </div>
           </div>
 
-          <div className="flex flex-row justify-center items-center  text-3xl pt-4 font-bold drop-shadow-xl">MarketPlace</div>
+          <div className="flex flex-row justify-center items-center  text-3xl pt-4 font-bold drop-shadow-xl">
+            MarketPlace
+          </div>
 
           <div>
             {lands.map((land, index) => (
@@ -180,9 +182,10 @@ function Market() {
                 <div className="h-full w-full flex flex-col backdrop-brightness-90  ">
                   <div className="w-3/4 ml-6 rounded-sm">
                     <p className="px-4 pt-4 text-2xl font-bold">
-                      {land.ownerId} : {land.landIdentificationNumber}
+                      {`${land.ownerId.slice(0, 4)}...${land.ownerId.slice(-4)}`} :{' '}
+                      {land.landIdentificationNumber}
                     </p>
-                    <p className="pl-4">Type: {land.type}</p>
+                    <p className="pl-4">Type: {land.landType}</p>
                     <div className="flex flex-row">
                       <p className="pl-4">Area: {land.area},</p>
                       <div className="flex flex-row items-center">
@@ -192,7 +195,7 @@ function Market() {
                     </div>
                   </div>
                   <div className="h-full m-10 flex justify-between items-center">
-                    <p className="text-xl font-bold ">Current prize: ₹{land.currentPrice}</p>
+                    <p className="text-xl font-bold ">Current prize: ₹{land.boughtPrice}</p>
                     <div className="flex flex-row space-x-6">
                       {/* <button
 													className="px-9 text-1/12 bg-slate-800 text-slate-100 p-2 rounded-xl shadow"

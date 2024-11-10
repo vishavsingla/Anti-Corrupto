@@ -129,7 +129,7 @@ exports.deleteInquiry = async (req, res) => {
 exports.deleteInquiryAfterTransfer = async (landId) => {
   try {
     await prisma.landInquiry.delete({
-      where: { landId },
+      where: { id:landId },
     });
 
     return 200;

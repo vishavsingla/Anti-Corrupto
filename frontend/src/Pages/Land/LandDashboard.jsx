@@ -196,9 +196,9 @@ function LandDashboard() {
           <Link to={`/dashboard/land/enquiries/${land.id}`}>
             {/* <Link to={`/dashboard/land/transfer/${land.id}`}> */}
             <p className="p-4 text-lg font-bold">
-              Owner: {land.currentOwner}
+              Owner: {`${land.ownerId.slice(0, 4)}...${land.ownerId.slice(-4)}`}
               <br></br>
-              Current Rate: ₹{land.transferAmount}/-
+              Current Rate: ₹{land.boughtPrice}/-
             </p>
           </Link>
           {/* <div><Market/></div> */}

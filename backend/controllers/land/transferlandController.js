@@ -4,7 +4,7 @@ const { deleteInquiryAfterTransfer } = require('./landInquiryController');
 const prisma = new PrismaClient();
 
 const createTransferLand = async (req, res) => {
-  if(true) {
+  try {
     var { prevOwnerId, currentOwnerId, landIdBackend, landIdWeb3, transferAmount } = req.body;
 
     if (!prevOwnerId || !currentOwnerId || !landIdBackend || !landIdWeb3 || !transferAmount) {
@@ -35,9 +35,9 @@ const createTransferLand = async (req, res) => {
   
     res.status(200).json({ success: true, data: newTransferLand });
   } 
-  // catch (error) {
-  //   res.status(203).json({ success: false, error: error.message });
-  // }
+  catch (error) {
+    res.status(203).json({ success: false, error: error.message });
+  }
 };
 
 const getAllTransferLands = async (req, res) => {
