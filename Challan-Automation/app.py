@@ -49,6 +49,8 @@ with open('challanABI.json', 'r') as file:
 
 contract = web3.eth.contract(address=contract_address, abi=contract_abi['abi'])
 
+import pandas as pd
+
 def filterDataSpeedAndNPD():
     # Load the CSV file
     df = pd.read_csv("output.csv")
@@ -60,11 +62,12 @@ def filterDataSpeedAndNPD():
     # Filter rows where license_plate_text or speed_kmh are missing
     df_filtered = df.dropna(subset=['license_plate_text', 'speed_kmh'])
 
-    # Remove spaces from the license plate text
+    # Remove spaces from the license plate text and check length
     df_filtered['license_plate_text'] = df_filtered['license_plate_text'].apply(lambda x: str(x).replace(" ", ""))
 
-    # Filter for number plates that start with "PB"
+    # Filter for number plates that start with "PB" and have exactly 10 characters
     df_filtered = df_filtered[df_filtered['license_plate_text'].str.startswith("PB")]
+    df_filtered = df_filtered[df_filtered['license_plate_text'].str.len() == 10]
 
     # Remove duplicates, keeping the last occurrence for each license plate
     df_unique = df_filtered.drop_duplicates(subset=['license_plate_text'], keep='last')
@@ -145,9 +148,9 @@ def transact():
     data = request.get_json()
     plate_number = data.get('plateNumber')
     # Prepare transaction
-    print('hi0')
+  
     account = web3.eth.account.from_key(private_key)
-    print('hi1')
+   
     print(account)
     tx_data={
         'vehicleId': plate_number,
@@ -155,7 +158,7 @@ def transact():
         'reason':'Over Speeding',
         'location':'Delhi',
     }
-    print('hi2')
+  
     nonce = web3.eth.get_transaction_count(
             account.address)
     print(tx_data)
@@ -167,7 +170,7 @@ def transact():
         'nonce': nonce
     })
 
-    print('hi3')
+
     # Sign and send transaction
     signed_txn = web3.eth.account.sign_transaction(transaction,private_key)
     # signed_txn = web3.eth.account.signTransaction(transaction, private_key=private_key)
@@ -182,7 +185,7 @@ def fetch_data():
     # Run the fetchData.py script
     try:
         filterDataSpeedAndNPD()
-        return jsonify({"status": "Data fetched successfully"}), 200
+        # return jsonify({"status": "Data fetched successfully"}), 200
         try:
         # Load the filtered data from CSV
             df = pd.read_csv('filtered_data_for_challan.csv')
