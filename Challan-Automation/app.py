@@ -53,26 +53,27 @@ def filterDataSpeedAndNPD():
     # Load the CSV file
     df = pd.read_csv("output.csv")
 
+    # Ensure 'license_plate_text' and 'speed_kmh' columns exist
+    if 'license_plate_text' not in df.columns or 'speed_kmh' not in df.columns:
+        raise ValueError("The CSV file must contain 'license_plate_text' and 'speed_kmh' columns.")
+
     # Filter rows where license_plate_text or speed_kmh are missing
     df_filtered = df.dropna(subset=['license_plate_text', 'speed_kmh'])
+
+    # Remove spaces from the license plate text
+    df_filtered['license_plate_text'] = df_filtered['license_plate_text'].apply(lambda x: str(x).replace(" ", ""))
+
+    # Filter for number plates that start with "PB"
+    df_filtered = df_filtered[df_filtered['license_plate_text'].str.startswith("PB")]
 
     # Remove duplicates, keeping the last occurrence for each license plate
     df_unique = df_filtered.drop_duplicates(subset=['license_plate_text'], keep='last')
 
-    # Select only the license_plate_text and speed_kmh columns
+    # Select only the 'license_plate_text' and 'speed_kmh' columns
     df_selected = df_unique[['license_plate_text', 'speed_kmh']]
 
-    # Get the first 5 rows
-    df_first_five = df_selected.head(5)
-
-    # Convert to JSON format
-    json_output = df_first_five.to_dict(orient="records")
-
-    # Print JSON output
-    print(json_output)
-
-    # Save the first 5 rows of the filtered DataFrame to a new CSV file
-    df_first_five.to_csv("filtered_data_for_challan.csv", index=False)
+    # Save the filtered DataFrame to a new CSV file
+    df_selected.to_csv("filtered_data_for_challan.csv", index=False)
 
 
 @app.route('/hello', methods=['GET'])
@@ -181,6 +182,7 @@ def fetch_data():
     # Run the fetchData.py script
     try:
         filterDataSpeedAndNPD()
+        return jsonify({"status": "Data fetched successfully"}), 200
         try:
         # Load the filtered data from CSV
             df = pd.read_csv('filtered_data_for_challan.csv')
