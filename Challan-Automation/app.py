@@ -92,7 +92,7 @@ def generate_random_7_digit_id():
 def create_challan():
     try:
         data = request.get_json()
-        amount = '100'
+        amount = '0.01'
         reason = 'Over Speeding'
         plate_number = data.get('plateNumber')
         # challan_id = data.get('challanId')

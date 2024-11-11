@@ -122,7 +122,7 @@ while ret:
             last_save_time = time.time()  # Reset the timer
 
         # Break the loop on 'q' key press and save remaining data
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
 # Release resources
