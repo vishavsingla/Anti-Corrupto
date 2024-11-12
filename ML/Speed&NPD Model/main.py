@@ -4,14 +4,14 @@ import numpy as np
 import warnings
 import pandas as pd  # Import pandas for handling CSV
 warnings.filterwarnings("ignore", category=FutureWarning)
-
+import requests
 import util
 from sortf.sort import *
 from util import get_car, read_license_plate
 
 
+# Initialize results and tracker
 results = []
-
 mot_tracker = Sort()
 
 # Load models
@@ -21,7 +21,9 @@ license_plate_detector = YOLO('license_plate_detector.pt')
 # Load video
 cap = cv2.VideoCapture('sample.mp4')
 fps = cap.get(cv2.CAP_PROP_FPS)  # Frames per second of the video
+frames_per_20_sec = int(20 * fps)  # Calculate the number of frames for 20 seconds
 
+# Vehicle classes
 vehicles = [2, 3, 5, 7]
 
 # Speed calculation parameters
@@ -39,6 +41,8 @@ def calculate_speed(prev_pos, curr_pos, fps):
 # Read frames
 frame_nmr = -1
 ret = True
+last_save_time = time.time()
+
 while ret:
     frame_nmr += 1
     ret, frame = cap.read()
@@ -109,13 +113,17 @@ while ret:
         # Display the current frame with annotations
         cv2.imshow('Camera View', frame)
 
-        # Break the loop on 'q' key press
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        # Save results to CSV every 20 seconds
+        if time.time() - last_save_time >= 20:
+            df = pd.DataFrame(results)
+            df.to_csv('../output.csv', index=False, mode='a', header=False)
+            response = requests.get('http://127.0.0.1:5000/generatechallans')  # Append mode
+            results.clear()  # Clear results after saving
+            last_save_time = time.time()  # Reset the timer
 
-# Write results to CSV using pandas
-df = pd.DataFrame(results)
-df.to_csv('../output.csv', index=False)
+        # Break the loop on 'q' key press and save remaining data
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 # Release resources
 cap.release()

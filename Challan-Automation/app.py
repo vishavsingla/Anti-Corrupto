@@ -17,8 +17,8 @@ load_dotenv()
 db = SQLAlchemy()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] ="postgresql://postgres.pgxcbqefaxqptyzgjyvr:terabhaijod@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
+# app.config['SQLALCHEMY_DATABASE_URI'] ="postgresql://postgres.pgxcbqefaxqptyzgjyvr:terabhaijod@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DATABASE_URL")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -40,6 +40,7 @@ private_key = os.getenv("PRIVATE_KEY")
 etherscan_api_key = os.getenv("ETHERSCAN_API_KEY")
 contract_address = os.getenv("CONTRACT_ADDRESS")
 
+
 web3 = Web3(Web3.HTTPProvider(f"https://sepolia.infura.io/v3/{infura_project_id}"))
 
 etherscan_url = f"https://api.etherscan.io/api?module=contract&action=getabi&address={contract_address}&apikey={etherscan_api_key}"
@@ -48,30 +49,34 @@ with open('challanABI.json', 'r') as file:
 
 contract = web3.eth.contract(address=contract_address, abi=contract_abi['abi'])
 
+import pandas as pd
+
 def filterDataSpeedAndNPD():
     # Load the CSV file
     df = pd.read_csv("output.csv")
 
+    # Ensure 'license_plate_text' and 'speed_kmh' columns exist
+    if 'license_plate_text' not in df.columns or 'speed_kmh' not in df.columns:
+        raise ValueError("The CSV file must contain 'license_plate_text' and 'speed_kmh' columns.")
+
     # Filter rows where license_plate_text or speed_kmh are missing
     df_filtered = df.dropna(subset=['license_plate_text', 'speed_kmh'])
+
+    # Remove spaces from the license plate text and check length
+    df_filtered['license_plate_text'] = df_filtered['license_plate_text'].apply(lambda x: str(x).replace(" ", ""))
+
+    # Filter for number plates that start with "PB" and have exactly 10 characters
+    df_filtered = df_filtered[df_filtered['license_plate_text'].str.startswith("PB")]
+    df_filtered = df_filtered[df_filtered['license_plate_text'].str.len() == 10]
 
     # Remove duplicates, keeping the last occurrence for each license plate
     df_unique = df_filtered.drop_duplicates(subset=['license_plate_text'], keep='last')
 
-    # Select only the license_plate_text and speed_kmh columns
+    # Select only the 'license_plate_text' and 'speed_kmh' columns
     df_selected = df_unique[['license_plate_text', 'speed_kmh']]
 
-    # Get the first 5 rows
-    df_first_five = df_selected.head(5)
-
-    # Convert to JSON format
-    json_output = df_first_five.to_dict(orient="records")
-
-    # Print JSON output
-    print(json_output)
-
-    # Save the first 5 rows of the filtered DataFrame to a new CSV file
-    df_first_five.to_csv("filtered_data_for_challan.csv", index=False)
+    # Save the filtered DataFrame to a new CSV file
+    df_selected.to_csv("filtered_data_for_challan.csv", index=False)
 
 
 @app.route('/hello', methods=['GET'])
@@ -91,7 +96,7 @@ def generate_random_7_digit_id():
 def create_challan():
     try:
         data = request.get_json()
-        amount = '100'
+        amount = '0.01'
         reason = 'Over Speeding'
         plate_number = data.get('plateNumber')
         # challan_id = data.get('challanId')
@@ -143,9 +148,9 @@ def transact():
     data = request.get_json()
     plate_number = data.get('plateNumber')
     # Prepare transaction
-    print('hi0')
+  
     account = web3.eth.account.from_key(private_key)
-    print('hi1')
+   
     print(account)
     tx_data={
         'vehicleId': plate_number,
@@ -153,17 +158,19 @@ def transact():
         'reason':'Over Speeding',
         'location':'Delhi',
     }
-    print('hi2')
+  
     nonce = web3.eth.get_transaction_count(
             account.address)
-    transaction = contract.functions.issueChallan(    tx_data['vehicleId'],
+    print(tx_data)
+    print(nonce)
+    transaction = contract.functions.issueChallan( tx_data['vehicleId'],
     tx_data['amount'],
     tx_data['reason'],
     tx_data['location']).build_transaction({
         'nonce': nonce
     })
 
-    print('hi3')
+
     # Sign and send transaction
     signed_txn = web3.eth.account.sign_transaction(transaction,private_key)
     # signed_txn = web3.eth.account.signTransaction(transaction, private_key=private_key)
@@ -178,6 +185,7 @@ def fetch_data():
     # Run the fetchData.py script
     try:
         filterDataSpeedAndNPD()
+        # return jsonify({"status": "Data fetched successfully"}), 200
         try:
         # Load the filtered data from CSV
             df = pd.read_csv('filtered_data_for_challan.csv')
