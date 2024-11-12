@@ -10,6 +10,7 @@ import {
 	Platform,
 	ScrollView,
 	Button,
+	ToastAndroid,
 } from "react-native";
 import PrimaryButton from "../components/primaryButton";
 import Colors from "../components/Colors";
@@ -22,7 +23,7 @@ import { router } from "expo-router";
 
 const PasswordSchema = Yup.object().shape({
 	password: Yup.string()
-		.min(4, "*Passsword Should be min of 4 characters")
+		.min(3, "*Passsword Should be min of 3 characters")
 		.max(16, "*Password should be max of 16 characters")
 		.required("*Password is required"),
 
@@ -35,7 +36,7 @@ const PasswordSchema = Yup.object().shape({
 		.required("*Phone number is required"),
 });
 
-export default function SignUpPage({ navigation }) {
+export default function SignUpPage() {
 	const [hidePassword, setHidePassword] = useState(true);
 	const [hideCPassword, setHideCPassword] = useState(true);
 
@@ -44,12 +45,20 @@ export default function SignUpPage({ navigation }) {
 	const [show, setShow] = useState(false);
 
 	const handleSubmit = async (values) => {
+		const data = { ...values, role: "USER" };
+		console.log(data);
 		try {
-			await signUpUser(values);
-			// const response = await loginUser(values);
-			// navigation.navigate("Home", response.session.sessionToken);
-			navigation.navigate("Login");
+			const response = await signUpUser(data);
+			console.log(response);
+			if (response.status === 200) {
+				router.navigate("/Login");
+			}
 		} catch (error) {
+			ToastAndroid.showWithGravity(
+				`User Already exists, Login to continue!`,
+				ToastAndroid.LONG,
+				ToastAndroid.BOTTOM
+			);
 			console.log(error);
 		}
 	};
@@ -86,7 +95,6 @@ export default function SignUpPage({ navigation }) {
 				}}
 				validationSchema={PasswordSchema}
 				onSubmit={(values) => {
-					// console.log(values);
 					handleSubmit(values);
 				}}
 			>

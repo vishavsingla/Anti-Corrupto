@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, useColorScheme } from "react-native";
 import LottieView from "lottie-react-native";
+import { Colors } from "@/constants/Colors";
 
 const LottieSplashScreen = () => {
 	// Automatically finish after the animation is done
@@ -8,30 +9,29 @@ const LottieSplashScreen = () => {
 	// 	const timer = setTimeout(onAnimationFinish); // Adjust timing based on your animation duration
 	// 	return () => clearTimeout(timer);
 	// }, [onAnimationFinish]);
+	const theme = useColorScheme();
 
 	return (
-		<View style={styles.container}>
+		<View
+			style={{
+				flex: 1,
+				justifyContent: "center",
+				alignItems: "center",
+				backgroundColor:
+					theme === "dark" ? Colors.dark.background : Colors.light.background,
+			}}
+		>
 			<LottieView
 				source={require("../assets/lotties/pulse.json")} // Path to your animation file
 				autoPlay
 				loop={true}
-				style={styles.animation}
+				style={{
+					width: 300,
+					height: 300,
+				}}
 			/>
 		</View>
 	);
 };
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		backgroundColor: "#fff", // Customize the background color
-	},
-	animation: {
-		width: 300, // Adjust to your preferred size
-		height: 300,
-	},
-});
 
 export default LottieSplashScreen;

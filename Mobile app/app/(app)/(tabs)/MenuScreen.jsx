@@ -26,9 +26,10 @@ import Colors from "../../../components/Colors";
 import { AndroidButton } from "../../../components/AndroidButton";
 import { router } from "expo-router";
 import { useAuth } from "../../../util/AuthContext";
+import { ThemedText } from "../../../components/ThemedText";
 
 export default function MenuScreen() {
-	const { logOut } = useAuth(); // Access auth state from context
+	const { logOut, userData } = useAuth(); // Access auth state from context
 
 	return (
 		<ImageBackground
@@ -75,20 +76,22 @@ export default function MenuScreen() {
 					</View>
 
 					{/* <AndroidButton className="rounded-3xl"> */}
-					<View className="flex-row pr-5 py-9 justify-center items-center">
+					<View className="flex-row px-6 py-9 justify-start items-center">
 						<Image
-							source={require("../../../assets/images/modi.jpeg")}
+							source={require("../../../assets/images/joker.png")}
 							style={{
-								width: 120,
-								height: 120,
+								width: 100,
+								height: 100,
 								borderRadius: 60,
 								borderWidth: 2,
 								borderColor: "#696969ff",
 							}}
 						/>
 						<View>
-							<Text className=" text-xl font-bold ml-4">Dr. Narendra Modi</Text>
-							<Text className=" text-xs ml-4">Web Developer</Text>
+							<Text className=" text-2xl font-bold ml-4">{userData?.name}</Text>
+							<ThemedText type="link" className=" text-s ml-4">
+								{userData?.email}
+							</ThemedText>
 						</View>
 					</View>
 					{/* </AndroidButton> */}

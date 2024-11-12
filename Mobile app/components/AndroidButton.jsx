@@ -11,6 +11,7 @@ export function AndroidButton({
 		/>
 	),
 	style,
+	innerStyle,
 	className,
 	rippleColor = "#86aad4ff",
 }) {
@@ -20,6 +21,7 @@ export function AndroidButton({
 				className="p-4"
 				android_ripple={{ color: rippleColor }}
 				onPress={onPress}
+				style={innerStyle}
 			>
 				{children}
 			</Pressable>

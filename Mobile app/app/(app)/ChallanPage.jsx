@@ -61,7 +61,6 @@ export default function AddChallan({ navigation }) {
 	}, []);
 
 	return (
-		<Web3>
 			<View className="flex-1">
 				<Formik
 					initialValues={{
@@ -181,6 +180,5 @@ export default function AddChallan({ navigation }) {
 					)}
 				</Formik>
 			</View>
-		</Web3>
 	);
 }

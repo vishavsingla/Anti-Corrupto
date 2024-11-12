@@ -26,3 +26,12 @@ export async function getSessionToken() {
 		return null;
 	}
 }
+
+export async function deleteSessionToken() {
+	try {
+		await SecureStore.deleteItemAsync("sessionToken");
+		console.log("Session token deleted successfully.");
+	} catch (error) {
+		console.error("Error deleting session token:", error);
+	}
+}

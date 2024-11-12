@@ -25,7 +25,7 @@ import { useAuth } from "../util/AuthContext";
 
 const PasswordSchema = Yup.object().shape({
 	password: Yup.string()
-		.min(4, "*Passsword Should be min of 4 characters")
+		.min(3, "*Passsword Should be min of 3 characters")
 		.max(16, "*Password should be max of 16 characters")
 		.required("*Password is required"),
 });
@@ -37,8 +37,9 @@ export default function Login() {
 		Keyboard.dismiss();
 		try {
 			const response = await loginUser(values);
+			console.log("Login Response:", response);
 
-			if (response.session.sessionToken) {
+			if (response.session?.sessionToken) {
 				saveSessionToken(response.session.sessionToken);
 				ToastAndroid.showWithGravity(
 					"Login Successfull ✅",
@@ -47,14 +48,26 @@ export default function Login() {
 				);
 				logIn();
 				router.replace("/(app)");
+			} else if (response.message === "Incorrect password") {
+				ToastAndroid.showWithGravity(
+					"Incorrect Password",
+					ToastAndroid.LONG,
+					ToastAndroid.BOTTOM
+				);
+			} else if (response.message === "User not found") {
+				ToastAndroid.showWithGravity(
+					"User not found, Signup to continue!",
+					ToastAndroid.LONG,
+					ToastAndroid.BOTTOM
+				);
 			}
 		} catch (error) {
+			console.log("Error occurred during login:", error);
 			ToastAndroid.showWithGravity(
-				`User not found, Signup to continue!`,
-				ToastAndroid.LONG,
+				"An unexpected error occurred. Please try again.",
+				ToastAndroid.SHORT,
 				ToastAndroid.BOTTOM
 			);
-			console.log("Error occurred during login:", error);
 		}
 	};
 
@@ -69,76 +82,70 @@ export default function Login() {
 				}}
 			>
 				{({ handleChange, handleSubmit, values, touched, errors }) => (
-					<View className=" flex-1 flex-col justify-between items-center w-full h-full bg-white p-3">
-						<View className=" py-24 ">
-							<Text
-								className="text-2xl font-bold text-center"
-								style={{ color: Colors.primaryBlue }}
-							>
-								LOGO
-							</Text>
-						</View>
+					<View className=" flex-1 gap-16 items-center bg-white p-3">
+						<Image
+							source={require("../assets/images/logo-blue.png")}
+							style={{ width: 150, height: 150, marginTop: 150, marginBottom: 100 }}
+						/>
 
-						<View className=" flex-col w-full px-4 justify-between ">
-							<View className=" pb-52  justify-between">
-								<TextInput
-									className=" mb-4 border-b border-gray-200 py-2 px-2 text-base text-gray-700"
-									placeholder="Email"
-									onChangeText={handleChange("email")}
-									value={values.email}
+						<View className="p-4 w-full">
+							<TextInput
+								className=" mb-4 border-b border-gray-200 py-2 px-2 text-base text-gray-700"
+								placeholder="Email"
+								onChangeText={handleChange("email")}
+								value={values.email}
+							/>
+							<TextInput
+								className=" border-b border-gray-200 py-2 px-2 text-base text-gray-700"
+								placeholder="Password"
+								secureTextEntry={true}
+								onChangeText={handleChange("password")}
+								value={values.password}
+							/>
+							{touched.password && errors.password && (
+								<Text className="text-red-600 px-2 my-1 text-xs">
+									{errors.password}
+								</Text>
+							)}
+							<View className="flex-row justify-start items-center px-2 my-4 ">
+								<BouncyCheckbox
+									size={14}
+									fillColor={Colors.primaryBlue}
+									isChecked={values.checked}
+									iconStyle={{ borderColor: "gray", borderRadius: 3, marginRight: -9 }}
+									innerIconStyle={{ borderColor: "gray", borderRadius: 3 }}
+									onPress={() => {
+										values.checked = !values.checked;
+										handleChange("checked");
+									}}
+									text="Remember me"
+									textStyle={{
+										color: "gray",
+										fontSize: 14,
+										textDecorationLine: "none",
+									}}
 								/>
-								<TextInput
-									className=" border-b border-gray-200 py-2 px-2 text-base text-gray-700"
-									placeholder="Password"
-									secureTextEntry={true}
-									onChangeText={handleChange("password")}
-									value={values.password}
-								/>
-								{touched.password && errors.password && (
-									<Text className="text-red-600 px-2 my-1 text-xs">
-										{errors.password}
-									</Text>
-								)}
-								<View className="flex-row justify-start items-center px-2 my-4 ">
-									<BouncyCheckbox
-										size={14}
-										fillColor={Colors.primaryBlue}
-										isChecked={values.checked}
-										iconStyle={{ borderColor: "gray", borderRadius: 3, marginRight: -9 }}
-										innerIconStyle={{ borderColor: "gray", borderRadius: 3 }}
-										onPress={() => {
-											values.checked = !values.checked;
-											handleChange("checked");
-										}}
-										text="Remember me"
-										textStyle={{
-											color: "gray",
-											fontSize: 14,
-											textDecorationLine: "none",
-										}}
-									/>
 
-									<TouchableOpacity className=" px-3 ">
-										<Text className=" text-primaryBlue">Forgot password?</Text>
-									</TouchableOpacity>
-								</View>
-
-								<View className=" my-2">
-									<PrimaryButton onPress={handleSubmit}>Login</PrimaryButton>
-								</View>
-							</View>
-
-							<View className=" flex-row p-4 mb-2 justify-center items-center">
-								<Text className="flex">Don't have an account yet?</Text>
-								<TouchableOpacity
-									className=" px-2 flex"
-									onPress={() => router.navigate("/(app)/(tabs)")}
-								>
-									<Text className="text-primaryBlue text-base font-semibold ">
-										Sign up
-									</Text>
+								<TouchableOpacity className=" px-3 ">
+									<Text className=" text-primaryBlue">Forgot password?</Text>
 								</TouchableOpacity>
 							</View>
+
+							<View className=" my-2">
+								<PrimaryButton onPress={handleSubmit}>Login</PrimaryButton>
+							</View>
+						</View>
+
+						<View className="absolute bottom-10 self-center flex-row justify-center items-center">
+							<Text>Don't have an account yet?</Text>
+							<TouchableOpacity
+								className=" px-2 flex"
+								onPress={() => router.navigate("/SignUp")}
+							>
+								<Text className="text-primaryBlue text-base font-semibold ">
+									Sign up
+								</Text>
+							</TouchableOpacity>
 						</View>
 					</View>
 				)}

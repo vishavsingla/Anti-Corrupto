@@ -1,53 +1,60 @@
 import axios from "axios";
+import { backendURL } from "./config";
+import { getSessionToken } from "./tokenStore";
 
-const API_URL = "http://172.20.10.3:3000/challan"; //home
+const API_URL = `${backendURL}/challan`;
+
+const getHeader = async () => {
+	const sessionToken = await getSessionToken();
+	return {
+		headers: {
+			Authorization: sessionToken, // Session token in headers
+		},
+	};
+};
 
 export const addChallan = async (challan) => {
-
 	try {
-		const response = await axios.post(`${API_URL}/add`, challan);
+		const header = await getHeader();
+		const response = await axios.post(`${API_URL}/add`, challan, header);
 		return response;
 	} catch (error) {
 		throw error;
 	}
 };
 
-export const getAllChallans = async () => {
+export const getVehicleChallans = async () => {
 	try {
-		const response = await axios.get(`${API_URL}/view`);
+		const header = await getHeader();
+		console.log("challan header: ", header);
+		const response = await axios.get(`${API_URL}/view`, header);
 		return response.data;
 	} catch (error) {
+		console.error(
+			"Error fetching challans:",
+			error.response?.data || error.message
+		);
 		throw error;
 	}
 };
 
 export const getChallansById = async (challanId) => {
 	try {
-		const response = await axios.get(`${API_URL}/view/${challanId}`);
+		const header = await getHeader();
+		const response = await axios.get(`${API_URL}/view/${challanId}`, header);
 		return response.data;
 	} catch (error) {
 		throw error;
 	}
 };
 
-export const updateChallan = async (challan) => {
-	const { id, issueDate, reason, vehicleId } = challan;
+export const updateChallanStatus = async (challanId) => {
 	try {
-		const response = await axios.put(`${API_URL}/${id}`, {
-			issueDate,
-			fine: "0",
-			reason,
-			vehicleId,
-		});
-		return response.data;
-	} catch (error) {
-		console.error(`Error updating challan: ${error.message}`);
-	}
-};
-
-export const deleteChallan = async (challanId) => {
-	try {
-		const response = await axios.delete(`${API_URL}/${challanId}`);
+		const header = await getHeader();
+		const response = await axios.post(
+			`${API_URL}/change/challan/status/${challanId}`,
+			header
+		);
 		return response.data;
 	} catch (error) {
 		throw error;

@@ -1,13 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { getSessionToken } from "./tokenStore";
-import { fetchUserDetails, isSessionValid } from "./authApi";
+import { deleteSessionToken, getSessionToken } from "./tokenStore";
+import { fetchUserDetails, isSessionValid, logoutUser } from "./authApi";
 import * as SplashScreen from "expo-splash-screen";
 import { ToastAndroid } from "react-native";
-import { logoutUser } from "./authApi";
 
 SplashScreen.preventAutoHideAsync();
 
-// Create Auth Context
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -22,32 +20,41 @@ export function AuthProvider({ children }) {
 		const checkUserAuth = async () => {
 			try {
 				const sessionToken = await getSessionToken();
+				if (!sessionToken) {
+					setAuthState(false);
+					return;
+				}
+
 				const sessionValid = await isSessionValid(sessionToken);
 				if (!sessionValid) {
 					setAuthState(false);
-					console.log("Auth State [ctx]:", authState);
-
 					ToastAndroid.show(
 						"Session expired, Please login again",
-						ToastAndroid.LONG
+						ToastAndroid.SHORT
 					);
 				} else {
 					const userDetails = await fetchUserDetails(sessionToken);
-					setUserData(userDetails.data);
-					setAuthState(true);
-					console.log("Auth State [ctx]:", authState);
+					console.log("User userDetails.data in Context: ", userDetails.data);
+
+					if (userDetails && userDetails.data) {
+						setUserData(userDetails.data);
+						setAuthState(true);
+					} else {
+						setAuthState(false);
+					}
 				}
 			} catch (error) {
-				console.log("Error:", error);
+				ToastAndroid.show("Error checking authentication.", ToastAndroid.SHORT);
+				setAuthState(false);
 			}
 		};
 
 		checkUserAuth();
+		console.log("User userData in Context state: ", userData);
 	}, []);
 
 	useEffect(() => {
 		if (authState !== null) {
-			console.log("Hiding Splash Screen:", authState);
 			SplashScreen.hideAsync();
 		}
 	}, [authState]);
@@ -55,6 +62,7 @@ export function AuthProvider({ children }) {
 	const logOut = () => {
 		setAuthState(false);
 		logoutUser();
+		deleteSessionToken();
 	};
 
 	const logIn = () => {

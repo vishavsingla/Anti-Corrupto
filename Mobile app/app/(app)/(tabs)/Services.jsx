@@ -163,6 +163,9 @@ export default function Services({ route, navigation }) {
 						<AndroidButton
 							className="flex-1 justify-between items-center m-2 bg-white rounded-lg"
 							style={{ elevation: 3 }}
+							onPress={() => {
+								router.navigate("Lands");
+							}}
 						>
 							<View className="w-full flex-row justify-between items-center">
 								<View className=" flex-row justify-between items-center gap-3">
