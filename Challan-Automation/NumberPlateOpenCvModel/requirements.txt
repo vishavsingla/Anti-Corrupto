@@ -45,7 +45,6 @@ Pygments
 pyparsing
 python-bidi
 python-dateutil
-pywin32
 PyYAML
 pyzmq
 requests
